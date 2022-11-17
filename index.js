@@ -58,12 +58,30 @@ app.get("/getusers", (req, res, next) => {
 });
 
 app.post("/saveuser", (req, res) => {
-  const { name, sobrenome, cpf, age } = req.body;
+  const { name, sobrenome, cpf, age, adress_id } = req.body;
 
   text =
-    "INSERT INTO users (name, sobrenome, cpf,age) VALUES($1, $2, $3, $4) RETURNING *";
+    "INSERT INTO users (name, sobrenome, cpf, age, adress_id) VALUES($1, $2, $3, $4, $5) RETURNING *";
 
-  values = [name, sobrenome, cpf, age];
+  values = [name, sobrenome, cpf, age, adress_id];
+
+  client
+    .query(text, values)
+    .then((resp) => {
+      res.json(resp.rows[0]);
+    })
+    .catch((e) => {
+      console.log(e);
+    });
+});
+
+app.post("/saveadress", (req, res) => {
+  const { bairro, numero, complemento, cidade } = req.body;
+
+  text =
+    "INSERT INTO adress (bairro, numero, complemento, cidade) VALUES($1, $2, $3, $4) RETURNING *";
+
+  values = [bairro, numero, complemento, cidade];
 
   client
     .query(text, values)
